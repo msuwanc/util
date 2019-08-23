@@ -4,18 +4,18 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class TryWrapper {
-    public static <A, T> Optional<T> tryOpt (Fn<A, T> f, A arg, Consumer<Exception> log) {
+    public static <A, T> Optional<T> tryOpt (Fn<A, T> f, A arg, Consumer<Exception> errorHandler) {
         try {
-            return Optional.of(f.apply(arg));
+            return Optional.ofNullable(f.apply(arg));
         } catch (Exception e) {
-            log.accept(e);
+            errorHandler.accept(e);
             return Optional.empty();
         }
     }
 
     public static <A, T> Optional<T> tryOpt (Fn<A, T> f, A arg) {
         try {
-            return Optional.of(f.apply(arg));
+            return Optional.ofNullable(f.apply(arg));
         } catch (Exception e) {
             return Optional.empty();
         }
