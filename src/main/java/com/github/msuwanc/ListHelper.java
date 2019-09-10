@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,5 +22,32 @@ public class ListHelper {
         return Stream.of(listA, listB)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    public static <T> List<T> page(int pageNo,
+                                   int pageSize,
+                                   Function<Integer, List<T>> fetchLogic) {
+        AtomicInteger pageCounter = new AtomicInteger(pageNo);
+
+        Supplier<Optional<List<T>>> fetch = () -> {
+            return TryWrapper.tryOpt(
+                    fetchLogic::apply,
+                    pageCounter.getAndIncrement()
+            );
+        };
+
+        boolean hasNextPage = true;
+        List<T> result = new ArrayList<>();
+
+        while (hasNextPage) {
+            Optional<List<T>> optFetchResult = fetch.get();
+            List<T> fetchResult = optFetchResult.orElse(Collections.emptyList());
+
+            result.addAll(fetchResult);
+
+            if(fetchResult.size() < pageSize) hasNextPage = false;
+        }
+
+        return result;
     }
 }
