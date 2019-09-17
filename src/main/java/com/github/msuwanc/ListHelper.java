@@ -24,10 +24,9 @@ public class ListHelper {
                 .collect(Collectors.toList());
     }
 
-    public static <T> List<T> page(int pageNo,
-                                   int pageSize,
+    public static <T> List<T> page(int pageSize,
                                    Function<Integer, List<T>> fetchLogic) {
-        AtomicInteger pageCounter = new AtomicInteger(pageNo);
+        AtomicInteger pageCounter = new AtomicInteger(0);
 
         Supplier<Optional<List<T>>> fetch = () -> {
             return TryWrapper.tryOpt(
