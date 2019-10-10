@@ -49,4 +49,8 @@ public class ListHelper {
 
         return result;
     }
+
+    public static <T> List<T> convertNullToEmpty(List<T> list) {
+        return list == null ? Collections.emptyList() : list;
+    }
 }
