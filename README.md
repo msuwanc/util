@@ -15,3 +15,6 @@ SetHelper
 
 StreamHelper
 - For distinct by whatever keys in Stream.filter method
+
+RetryHelper
+- For general purpose retry function
