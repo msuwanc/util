@@ -1,5 +1,6 @@
 package com.github.msuwanc;
 
+import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,23 @@ public class RetryHelper {
             return retry(mainLogic, intervalSec, retryCount - 1);
         } else {
             return optResult;
+        }
+    }
+
+    public static <T> Try<T> retryTry(Supplier<Try<T>> mainLogic, int intervalSec, int retryCount) {
+        Try<T> tryResult = mainLogic.get();
+
+        if(retryCount > 0 && tryResult.isFailure()) {
+            try {
+                Thread.sleep(intervalSec * 1_000L);
+            } catch (InterruptedException e) {
+                LOG.warn(e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            return retryTry(mainLogic, intervalSec, retryCount - 1);
+        } else {
+            return tryResult;
         }
     }
 }
