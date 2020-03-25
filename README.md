@@ -13,6 +13,9 @@ ListHelper
 SetHelper
 - For concat
 
+MapHelper
+- For reverse
+
 StreamHelper
 - For distinct by whatever keys in Stream.filter method
 
